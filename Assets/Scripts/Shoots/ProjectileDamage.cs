@@ -1,10 +1,7 @@
 using UnityEngine;
-
-//TP2 - Fernando Claro
-
 public class ProjectileDamage : MonoBehaviour
 {
-    private int damage;
+    public int damage = 1;
 
     public void SetDamage(int value)
     {
@@ -13,13 +10,21 @@ public class ProjectileDamage : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-        if (damageable != null)
+        EnemyHealth enemy = collision.collider.GetComponent<EnemyHealth>();
+
+        if (enemy != null)
         {
-            damageable.TakeDamage(damage);
+            Vector3 hitPos = collision.contacts[0].point;
+            Vector3 hitNormal = collision.contacts[0].normal;
+
+            enemy.TakeDamage(damage, hitPos, hitNormal);
         }
 
         Destroy(gameObject);
     }
 }
+
+
+
+
 

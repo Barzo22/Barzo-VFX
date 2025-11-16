@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//TP2 - Ariadna Delpiano
 
 public abstract class Entity : MonoBehaviour, IDamageable
 {
@@ -12,7 +11,7 @@ public abstract class Entity : MonoBehaviour, IDamageable
     public int maxLife;
     protected int _life;
 
-    private void Start()
+    public void Start()
     {
         _life = maxLife;
     }
