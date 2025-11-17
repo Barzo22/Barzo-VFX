@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Name: Vignette
   m_EditorClassIdentifier: 
   m_Active: 1
-  passMaterial: {fileID: 2100000, guid: 5605607b2bf92964c882425d964e36a8, type: 2}
+  passMaterial: {fileID: 0}
   injectionPoint: 600
   requirements: -1
   passIndex: 0

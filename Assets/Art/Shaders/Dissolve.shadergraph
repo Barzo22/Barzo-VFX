@@ -2347,7 +2347,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Cutoff Height",
     "m_DefaultReferenceName": "_Cutoff_Height",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_CutoffHeight",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
