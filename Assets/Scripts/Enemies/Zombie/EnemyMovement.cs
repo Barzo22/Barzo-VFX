@@ -17,25 +17,45 @@ public class EnemySteering : MonoBehaviour
 
     private Vector3 velocity;
 
+    Animator anim;
+
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
+
     void Update()
     {
         if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
+        // ======================
+        // 1. Fuera del rango → Idle
+        // ======================
         if (distance > detectionRange)
         {
             velocity = Vector3.zero;
+            anim.SetBool("IsWalking", false);
             return;
         }
 
+        // ======================
+        // 2. En rango de ataque → Attack (Trigger)
+        // ======================
         if (distance <= attackRange)
         {
             velocity = Vector3.zero;
+            anim.SetBool("IsWalking", false);
 
-            TryAttack();
+            TryAttack();  // aquí disparamos el Trigger
             return;
         }
+
+        // ======================
+        // 3. En rango de persecución → Walk
+        // ======================
+        anim.SetBool("IsWalking", true);
 
         Vector3 steering = Seek(player.position);
         velocity += steering * Time.deltaTime;
@@ -43,6 +63,7 @@ public class EnemySteering : MonoBehaviour
 
         transform.position += velocity * Time.deltaTime;
 
+        // Rotación hacia la dirección de movimiento
         if (velocity.magnitude > 0.1f)
         {
             Quaternion lookRot = Quaternion.LookRotation(velocity, Vector3.up);
@@ -50,10 +71,15 @@ public class EnemySteering : MonoBehaviour
         }
     }
 
+    // ======================
+    // ATAQUE – usa Trigger para animación
+    // ======================
     private void TryAttack()
     {
         if (Time.time - lastAttackTime >= timeBetweenAttacks)
         {
+            anim.SetTrigger("Attack");  // 🔥 REPRODUCE LA ANIMACIÓN
+
             Player p = player.GetComponent<Player>();
             if (p != null)
             {
@@ -61,10 +87,12 @@ public class EnemySteering : MonoBehaviour
             }
 
             lastAttackTime = Time.time;
-            Debug.Log("Enemy dealt damage!");
         }
     }
 
+    // ======================
+    // STEERING / SEEK
+    // ======================
     Vector3 Seek(Vector3 target)
     {
         Vector3 desired = target - transform.position;
