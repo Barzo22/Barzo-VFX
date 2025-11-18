@@ -5,24 +5,21 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyHealth : MonoBehaviour
 {
-    [Header("Health")]
+    public EnemyManager manager;
+
     public int maxHealth = 3;
     private int currentHealth;
 
-    [Header("Blood Prefabs")]
     public GameObject bloodEffectPrefab;
     public GameObject floorBloodPrefab;
 
-    [Header("Floor Raycast")]
     public LayerMask floorMask;
 
-    [Header("Dissolve")]
     public string dissolveProperty = "_Dissolve";
     public float dissolveDuration = 1.5f;
     public float dissolveFrom = 0f;
     public float dissolveTo = 1f;
 
-    [Header("Animation")]
     public Animator anim;
 
     private bool isDying = false;
@@ -30,6 +27,8 @@ public class EnemyHealth : MonoBehaviour
     private Material[][] instantiatedMaterialsPerRenderer;
     private Rigidbody rb;
     private Collider[] colliders;
+
+    
 
     void Awake()
     {
@@ -43,7 +42,7 @@ public class EnemyHealth : MonoBehaviour
 
         // Rigidbody
         rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true; // física desactivada mientras está vivo
+        rb.isKinematic = true; 
         rb.useGravity = false;
 
         // Colliders
@@ -97,23 +96,21 @@ public class EnemyHealth : MonoBehaviour
     void StartDeath()
     {
         if (isDying) return;
-
-        // INSTANTÁNEO → bloquear daño & colisiones YA
         isDying = true;
 
-        // Cambiar capa YA para que balas NO choquen más
+        // >>>>> AGREGAR ESTO <<<<<
+        if (manager != null)
+            manager.EnemyDied();
+
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
 
-        // Desactivar TODOS los colliders YA (evita que reciba más impactos)
         foreach (var col in colliders)
             col.enabled = false;
 
-        // Volvemos a activar SOLO el collider raíz para tocar el suelo
         Collider rootCol = GetComponent<Collider>();
         if (rootCol != null)
             rootCol.enabled = true;
 
-        // Resetear fuerzas inmediatamente
         if (rb != null)
         {
             rb.isKinematic = false;
@@ -122,13 +119,11 @@ public class EnemyHealth : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        // Desactivar scripts de movimiento/AI YA
         foreach (var s in GetComponents<MonoBehaviour>())
         {
             if (s != this) s.enabled = false;
         }
 
-        // Ahora sí: animación
         if (anim != null)
             anim.SetTrigger("Die");
 
@@ -137,9 +132,10 @@ public class EnemyHealth : MonoBehaviour
 
 
 
+
+
     IEnumerator DeathSequence()
     {
-        // Esperar a que termine la animación de muerte
         if (anim != null)
         {
             AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
@@ -151,7 +147,6 @@ public class EnemyHealth : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
-        // Iniciar dissolve y destrucción
         yield return DissolveAndDieCoroutine();
     }
 

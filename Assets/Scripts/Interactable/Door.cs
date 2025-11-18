@@ -2,7 +2,12 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public Animator anim;
+    Animator anim;
+
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
 
     public void OpenDoor()
     {
