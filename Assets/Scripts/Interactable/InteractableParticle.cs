@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;   // Necesario si usás Text o Image
 
 public class InteractableParticles : MonoBehaviour
 {
@@ -17,11 +18,12 @@ public class InteractableParticles : MonoBehaviour
     [Tooltip("Tecla para interactuar")]
     public KeyCode interactKey = KeyCode.E;
 
-    [Header("Cambio de Material")]
-    [Tooltip("Renderers a los que se les cambiará el material al interactuar")]
-    public Renderer[] targetRenderers;
+    [Header("UI de interacción")]
+    [Tooltip("Cartel que dice 'Presiona E'")]
+    public GameObject interactionUI;
 
-    [Tooltip("Material que se aplicará al interactuar")]
+    [Header("Cambio de Material")]
+    public Renderer[] targetRenderers;
     public Material newMaterial;
 
     private Material[] originalMaterials;
@@ -29,7 +31,6 @@ public class InteractableParticles : MonoBehaviour
 
     void Start()
     {
-        // Asignar player automáticamente
         if (player == null)
         {
             if (Player.PlayerTransform != null)
@@ -43,7 +44,9 @@ public class InteractableParticles : MonoBehaviour
             }
         }
 
-        // Guardar materiales originales
+        if (interactionUI != null)
+            interactionUI.SetActive(false);
+
         if (targetRenderers != null && targetRenderers.Length > 0)
         {
             originalMaterials = new Material[targetRenderers.Length];
@@ -60,18 +63,27 @@ public class InteractableParticles : MonoBehaviour
         if (player == null) return;
 
         float dist = Vector3.Distance(player.position, transform.position);
+
+        // Mostrar / Ocultar cartel
+        if (interactionUI != null)
+            interactionUI.SetActive(dist <= interactionDistance);
+
+        // Si está lejos no deja interactuar
         if (dist > interactionDistance) return;
 
         if (Input.GetKeyDown(interactKey))
         {
             TurnOffParticles();
             SwapMaterials();
+
+            // Ocultar cartel después de interactuar
+            if (interactionUI != null)
+                interactionUI.SetActive(false);
         }
     }
 
     public void TurnOffParticles()
     {
-        // ParticleSystems
         if (particles != null)
         {
             foreach (var ps in particles)
@@ -82,7 +94,6 @@ public class InteractableParticles : MonoBehaviour
             }
         }
 
-        // GameObjects
         if (particleGameObjects != null)
         {
             foreach (var go in particleGameObjects)
@@ -105,7 +116,6 @@ public class InteractableParticles : MonoBehaviour
 
         if (!materialsSwapped)
         {
-            // Aplicar nuevo material
             for (int i = 0; i < targetRenderers.Length; i++)
             {
                 if (targetRenderers[i] != null)
@@ -114,7 +124,6 @@ public class InteractableParticles : MonoBehaviour
         }
         else
         {
-            // Volver a materiales originales (opcional)
             for (int i = 0; i < targetRenderers.Length; i++)
             {
                 if (targetRenderers[i] != null)
@@ -131,6 +140,7 @@ public class InteractableParticles : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, interactionDistance);
     }
 }
+
 
 
 

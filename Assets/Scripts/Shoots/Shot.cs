@@ -30,7 +30,6 @@ public class Shot : MonoBehaviour
             if (!isOnCooldown)
             {
                 ThrowBullet();
-                StartCooldown();
             }
         }
 
@@ -72,21 +71,4 @@ public class Shot : MonoBehaviour
         return isOnCooldown;
     }
 
-    public void StartCooldown()
-    {
-        isOnCooldown = true;
-        cooldownTimer = CalculateCooldownTime();
-    }
-
-    private float CalculateCooldownTime()
-    {
-        if (gameObject.CompareTag("Weapon2"))
-        {
-            return 2.0f; 
-        }
-        else
-        {
-            return 0f; 
-        }
-    }
 }

@@ -20,7 +20,7 @@ public class Movement
     {
         _playerBody = playerBody;
         this.speed = speed;
-        jumpForce = 5f;
+        jumpForce = 7f;
     }
 
     public void Move(float vertical, float horizontal)

@@ -49,7 +49,6 @@ public class WeaponSwitch : MonoBehaviour
                 if (!weapon1Shot.IsOnCooldown())
                 {
                     weapon1Shot.ThrowBullet();
-                    weapon1Shot.StartCooldown();
                 }
             }
             else
@@ -57,7 +56,6 @@ public class WeaponSwitch : MonoBehaviour
                 if (!weapon2Shot.IsOnCooldown())
                 {
                     weapon2Shot.ThrowBullet();
-                    weapon2Shot.StartCooldown();
                 }
             }
         }
